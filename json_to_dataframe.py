@@ -21,14 +21,14 @@ def process_historical_price_full(json_file_path):
     
     # 取得歷史價格數據
     historical_data = data['historicalPriceFull']['historical']
-    
+    symbol = data['historicalPriceFull'].get('symbol', None)
     # 創建 DataFrame
     df_data = []
     
     for record in historical_data:
         row = {
             'date': record.get('date'),
-            'symbol': record.get('symbol'),
+            'symbol': symbol,
             'open': record.get('open'),
             'high': record.get('high'),
             'low': record.get('low'),
@@ -354,6 +354,86 @@ def process_income_growth(json_file_path):
     
     return df
 
+def process_balance_sheet_growth(json_file_path):
+    """
+    將 JSON 檔案中的 balanceSheetStatementGrowth 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得資產負債表成長數據
+    balance_sheet_growth_data = data['balanceSheetStatementGrowth']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in balance_sheet_growth_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': record.get('symbol'),
+            'calendarYear': record.get('calendarYear'),
+            'period': record.get('period'),
+            'growthCashAndCashEquivalents': record.get('growthCashAndCashEquivalents'),
+            'growthShortTermInvestments': record.get('growthShortTermInvestments'),
+            'growthCashAndShortTermInvestments': record.get('growthCashAndShortTermInvestments'),
+            'growthNetReceivables': record.get('growthNetReceivables'),
+            'growthInventory': record.get('growthInventory'),
+            'growthOtherCurrentAssets': record.get('growthOtherCurrentAssets'),
+            'growthTotalCurrentAssets': record.get('growthTotalCurrentAssets'),
+            'growthPropertyPlantEquipmentNet': record.get('growthPropertyPlantEquipmentNet'),
+            'growthGoodwill': record.get('growthGoodwill'),
+            'growthIntangibleAssets': record.get('growthIntangibleAssets'),
+            'growthGoodwillAndIntangibleAssets': record.get('growthGoodwillAndIntangibleAssets'),
+            'growthLongTermInvestments': record.get('growthLongTermInvestments'),
+            'growthTaxAssets': record.get('growthTaxAssets'),
+            'growthOtherNonCurrentAssets': record.get('growthOtherNonCurrentAssets'),
+            'growthTotalNonCurrentAssets': record.get('growthTotalNonCurrentAssets'),
+            'growthOtherAssets': record.get('growthOtherAssets'),
+            'growthTotalAssets': record.get('growthTotalAssets'),
+            'growthAccountPayables': record.get('growthAccountPayables'),
+            'growthShortTermDebt': record.get('growthShortTermDebt'),
+            'growthTaxPayables': record.get('growthTaxPayables'),
+            'growthDeferredRevenue': record.get('growthDeferredRevenue'),
+            'growthOtherCurrentLiabilities': record.get('growthOtherCurrentLiabilities'),
+            'growthTotalCurrentLiabilities': record.get('growthTotalCurrentLiabilities'),
+            'growthLongTermDebt': record.get('growthLongTermDebt'),
+            'growthDeferredRevenueNonCurrent': record.get('growthDeferredRevenueNonCurrent'),
+            'growthDeferrredTaxLiabilitiesNonCurrent': record.get('growthDeferrredTaxLiabilitiesNonCurrent'),
+            'growthOtherNonCurrentLiabilities': record.get('growthOtherNonCurrentLiabilities'),
+            'growthTotalNonCurrentLiabilities': record.get('growthTotalNonCurrentLiabilities'),
+            'growthOtherLiabilities': record.get('growthOtherLiabilities'),
+            'growthTotalLiabilities': record.get('growthTotalLiabilities'),
+            'growthCommonStock': record.get('growthCommonStock'),
+            'growthRetainedEarnings': record.get('growthRetainedEarnings'),
+            'growthAccumulatedOtherComprehensiveIncomeLoss': record.get('growthAccumulatedOtherComprehensiveIncomeLoss'),
+            'growthOthertotalStockholdersEquity': record.get('growthOthertotalStockholdersEquity'),
+            'growthTotalStockholdersEquity': record.get('growthTotalStockholdersEquity'),
+            'growthTotalLiabilitiesAndStockholdersEquity': record.get('growthTotalLiabilitiesAndStockholdersEquity'),
+            'growthTotalInvestments': record.get('growthTotalInvestments'),
+            'growthTotalDebt': record.get('growthTotalDebt'),
+            'growthNetDebt': record.get('growthNetDebt')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由新到舊）
+        df = df.sort_values('date', ascending=False).reset_index(drop=True)
+    
+    return df
+
 def load_json_data(file_path: str) -> dict:
     """讀取 JSON 檔案並回傳字典"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -400,6 +480,11 @@ def process_all_data(json_file_path: str) -> dict:
         df = process_income_growth(json_file_path)
         result['incomeStatementGrowth'] = df
     
+    # 處理 balanceSheetStatementGrowth
+    if 'balanceSheetStatementGrowth' in data and data['balanceSheetStatementGrowth']:
+        df = process_balance_sheet_growth(json_file_path)
+        result['balanceSheetStatementGrowth'] = df
+    
     return result
 
 def main():
@@ -443,6 +528,13 @@ def main():
             print("\n--- incomeStatementGrowth_df 範例 ---")
             print(income_growth_df.head())
             save_dataframe(income_growth_df, f"incomeStatementGrowth.csv")
+        
+        # 取得 balanceSheetStatementGrowth 的 DataFrame
+        balance_sheet_growth_df = all_dataframes['balanceSheetStatementGrowth'] if 'balanceSheetStatementGrowth' in all_dataframes else None
+        if balance_sheet_growth_df is not None:
+            print("\n--- balanceSheetStatementGrowth_df 範例 ---")
+            print(balance_sheet_growth_df.head())
+            save_dataframe(balance_sheet_growth_df, f"balanceSheetStatementGrowth.csv")
         
         return all_dataframes
     except Exception as e:
