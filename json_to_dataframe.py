@@ -4,13 +4,12 @@ import os
 import pandas as pd
 
 
-def convert_json_to_dataframe(json_file_path, symbol="1101.TW"):
+def process_historical_price_full(json_file_path):
     """
     將 JSON 檔案中的 historicalPriceFull 數據轉換為 DataFrame
     
     Args:
         json_file_path (str): JSON 檔案路徑
-        symbol (str): 股票代號，預設為 "1101.TW"
     
     Returns:
         pd.DataFrame: 轉換後的 DataFrame
@@ -28,20 +27,20 @@ def convert_json_to_dataframe(json_file_path, symbol="1101.TW"):
     
     for record in historical_data:
         row = {
-            'date': record['date'],
-            'symbol': symbol,
-            'open': record['open'],
-            'high': record['high'],
-            'low': record['low'],
-            'close': record['close'],
-            'adjClose': record['adjClose'],
-            'volume': record['volume'],
-            'unadjustedVolume': record['unadjustedVolume'],
-            'change': record['change'],
-            'changePercent': record['changePercent'],
-            'vwap': record['vwap'],
-            'label': record['label'],
-            'changeOverTime': record['changeOverTime']
+            'date': record.get('date'),
+            'symbol': record.get('symbol'),
+            'open': record.get('open'),
+            'high': record.get('high'),
+            'low': record.get('low'),
+            'close': record.get('close'),
+            'adjClose': record.get('adjClose'),
+            'volume': record.get('volume'),
+            'unadjustedVolume': record.get('unadjustedVolume'),
+            'change': record.get('change'),
+            'changePercent': record.get('changePercent'),
+            'vwap': record.get('vwap'),
+            'label': record.get('label'),
+            'changeOverTime': record.get('changeOverTime')
         }
         df_data.append(row)
     
@@ -56,37 +55,127 @@ def convert_json_to_dataframe(json_file_path, symbol="1101.TW"):
     
     return df
 
+def process_financial_growth(json_file_path):
+    """
+    將 JSON 檔案中的 financialGrowth 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得財務成長數據
+    financial_growth_data = data['financialGrowth']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in financial_growth_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': record.get('symbol'),
+            'calendarYear': record.get('calendarYear'),
+            'period': record.get('period'),
+            'revenueGrowth': record.get('revenueGrowth'),
+            'grossProfitGrowth': record.get('grossProfitGrowth'),
+            'ebitgrowth': record.get('ebitgrowth'),
+            'operatingIncomeGrowth': record.get('operatingIncomeGrowth'),
+            'netIncomeGrowth': record.get('netIncomeGrowth'),
+            'epsgrowth': record.get('epsgrowth'),
+            'epsdilutedGrowth': record.get('epsdilutedGrowth'),
+            'weightedAverageSharesGrowth': record.get('weightedAverageSharesGrowth'),
+            'weightedAverageSharesDilutedGrowth': record.get('weightedAverageSharesDilutedGrowth'),
+            'dividendsperShareGrowth': record.get('dividendsperShareGrowth'),
+            'operatingCashFlowGrowth': record.get('operatingCashFlowGrowth'),
+            'freeCashFlowGrowth': record.get('freeCashFlowGrowth'),
+            'tenYRevenueGrowthPerShare': record.get('tenYRevenueGrowthPerShare'),
+            'fiveYRevenueGrowthPerShare': record.get('fiveYRevenueGrowthPerShare'),
+            'threeYRevenueGrowthPerShare': record.get('threeYRevenueGrowthPerShare'),
+            'tenYOperatingCFGrowthPerShare': record.get('tenYOperatingCFGrowthPerShare'),
+            'fiveYOperatingCFGrowthPerShare': record.get('fiveYOperatingCFGrowthPerShare'),
+            'threeYOperatingCFGrowthPerShare': record.get('threeYOperatingCFGrowthPerShare'),
+            'tenYNetIncomeGrowthPerShare': record.get('tenYNetIncomeGrowthPerShare'),
+            'fiveYNetIncomeGrowthPerShare': record.get('fiveYNetIncomeGrowthPerShare'),
+            'threeYNetIncomeGrowthPerShare': record.get('threeYNetIncomeGrowthPerShare'),
+            'tenYShareholdersEquityGrowthPerShare': record.get('tenYShareholdersEquityGrowthPerShare'),
+            'fiveYShareholdersEquityGrowthPerShare': record.get('fiveYShareholdersEquityGrowthPerShare'),
+            'threeYShareholdersEquityGrowthPerShare': record.get('threeYShareholdersEquityGrowthPerShare'),
+            'tenYDividendperShareGrowthPerShare': record.get('tenYDividendperShareGrowthPerShare')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由新到舊）
+        df = df.sort_values('date', ascending=False).reset_index(drop=True)
+    
+    return df
+
+def load_json_data(file_path: str) -> dict:
+    """讀取 JSON 檔案並回傳字典"""
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+def add_common_columns(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    """加入共用欄位 symbol"""
+    df['symbol'] = symbol
+    return df
+
+def save_dataframe(df: pd.DataFrame, filename: str, output_dir: str = "/home/ubuntu"):
+    """儲存 DataFrame 為 CSV 檔案"""
+    output_path = os.path.join(output_dir, filename)
+    df.to_csv(output_path, index=False)
+    print(f"已儲存為 CSV 檔案: {output_path}")
+
+def process_all_data(json_file_path: str) -> dict:
+    """處理所有 key 的數據，回傳包含所有 DataFrame 的字典"""
+    data = load_json_data(json_file_path)
+    result = {}
+    
+    # 處理 historicalPriceFull
+    if 'historicalPriceFull' in data and data['historicalPriceFull']['historical']:
+        df = process_historical_price_full(json_file_path)
+        result['historicalPriceFull'] = df
+    
+    # 處理 financialGrowth
+    if 'financialGrowth' in data and data['financialGrowth']:
+        df = process_financial_growth(json_file_path)
+        result['financialGrowth'] = df
+    
+    return result
+
 def main():
     # 指定 JSON 檔案路徑
-    json_file_path = '/home/ubuntu/workspace/output_data.json'
-    
+    json_file_path = '/home/ubuntu/workspace/stark_test/output_data.json'
     try:
-        # 轉換為 DataFrame
-        df = convert_json_to_dataframe(json_file_path)
+        # 可選擇處理全部 key 或單一 key
+        all_dataframes = process_all_data(json_file_path)
         
-        # 顯示基本資訊
-        print(f"資料筆數: {len(df)}")
-        print(f"日期範圍: {df['date'].min()} 到 {df['date'].max()}")
-        print("\n前 5 筆資料:")
-        print(df.head())
+        # 取得 historicalPriceFull 的 DataFrame
+        price_df = all_dataframes['historicalPriceFull'] if 'historicalPriceFull' in all_dataframes else None
+        if price_df is not None:
+            print("\n--- price_df 範例 ---")
+            print(price_df.head())
+            save_dataframe(price_df, f"historicalPriceFull.csv")
         
-        # 顯示欄位資訊
-        print("\n欄位資訊:")
-        print(df.info())
+        # 取得 financialGrowth 的 DataFrame
+        growth_df = all_dataframes['financialGrowth'] if 'financialGrowth' in all_dataframes else None
+        if growth_df is not None:
+            print("\n--- financialGrowth_df 範例 ---")
+            print(growth_df.head())
+            save_dataframe(growth_df, f"financialGrowth.csv")
         
-        # 儲存為 CSV 檔案
-        output_csv_path = '/home/ubuntu/historical_price_data.csv'
-        df.to_csv(output_csv_path, index=False)
-        print(f"\n已儲存為 CSV 檔案: {output_csv_path}")
-        
-        # 顯示範例資料格式
-        print("\n範例資料 (前 3 筆):")
-        for i in range(min(3, len(df))):
-            row = df.iloc[i]
-            print(f'"{row["date"].strftime("%Y-%m-%d")}", "{row["symbol"]}", {row["open"]}, {row["high"]}, {row["low"]}, {row["close"]}, {row["adjClose"]}, {row["volume"]}, {row["unadjustedVolume"]}, {row["change"]}, {row["changePercent"]}, {row["vwap"]}, "{row["label"]}", {row["changeOverTime"]}')
-        
-        return df
-        
+        return all_dataframes
     except Exception as e:
         print(f"錯誤: {e}")
         return None
