@@ -593,6 +593,59 @@ def process_tech60(json_file_path):
     
     return df
 
+def process_tech252(json_file_path):
+    """
+    將 JSON 檔案中的 tech252 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得 tech252 數據
+    tech252_data = data['tech252']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in tech252_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': "1101.TW",
+            'open': record.get('open'),
+            'high': record.get('high'),
+            'low': record.get('low'),
+            'close': record.get('close'),
+            'volume': record.get('volume'),
+            'sma': record.get('sma'),
+            'ema': record.get('ema'),
+            'wma': record.get('wma'),
+            'dema': record.get('dema'),
+            'tema': record.get('tema'),
+            'williams': record.get('williams'),
+            'rsi': record.get('rsi'),
+            'adx': record.get('adx'),
+            'standardDeviation': record.get('standardDeviation')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由舊到新）
+        df = df.sort_values('date').reset_index(drop=True)
+    
+    return df
+
 def load_json_data(file_path: str) -> dict:
     """讀取 JSON 檔案並回傳字典"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -658,6 +711,11 @@ def process_all_data(json_file_path: str) -> dict:
     if 'tech60' in data and data['tech60']:
         df = process_tech60(json_file_path)
         result['tech60'] = df
+    
+    # 處理 tech252
+    if 'tech252' in data and data['tech252']:
+        df = process_tech252(json_file_path)
+        result['tech252'] = df
     
     return result
 
@@ -730,6 +788,13 @@ def main():
             print("\n--- tech60_df 範例 ---")
             print(tech60_df.head())
             save_dataframe(tech60_df, f"tech60.csv")
+        
+        # 取得 tech252 的 DataFrame
+        tech252_df = all_dataframes['tech252'] if 'tech252' in all_dataframes else None
+        if tech252_df is not None:
+            print("\n--- tech252_df 範例 ---")
+            print(tech252_df.head())
+            save_dataframe(tech252_df, f"tech252.csv")
         
         return all_dataframes
     except Exception as e:
