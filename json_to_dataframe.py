@@ -434,6 +434,59 @@ def process_balance_sheet_growth(json_file_path):
     
     return df
 
+def process_tech5(json_file_path):
+    """
+    將 JSON 檔案中的 tech5 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得 tech5 數據
+    tech5_data = data['tech5']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in tech5_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': "1101.TW",
+            'open': record.get('open'),
+            'high': record.get('high'),
+            'low': record.get('low'),
+            'close': record.get('close'),
+            'volume': record.get('volume'),
+            'sma': record.get('sma'),
+            'ema': record.get('ema'),
+            'wma': record.get('wma'),
+            'dema': record.get('dema'),
+            'tema': record.get('tema'),
+            'williams': record.get('williams'),
+            'rsi': record.get('rsi'),
+            'adx': record.get('adx'),
+            'standardDeviation': record.get('standardDeviation')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由舊到新）
+        df = df.sort_values('date').reset_index(drop=True)
+    
+    return df
+
 def load_json_data(file_path: str) -> dict:
     """讀取 JSON 檔案並回傳字典"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -485,6 +538,15 @@ def process_all_data(json_file_path: str) -> dict:
         df = process_balance_sheet_growth(json_file_path)
         result['balanceSheetStatementGrowth'] = df
     
+    # 處理 tech5
+    if 'tech5' in data and data['tech5']:
+        df = process_tech5(json_file_path)
+        result['tech5'] = df
+    # 處理 tech5
+    if 'tech5' in data and data['tech5']:
+        df = process_tech5(json_file_path)
+        result['tech5'] = df
+    
     return result
 
 def main():
@@ -535,6 +597,20 @@ def main():
             print("\n--- balanceSheetStatementGrowth_df 範例 ---")
             print(balance_sheet_growth_df.head())
             save_dataframe(balance_sheet_growth_df, f"balanceSheetStatementGrowth.csv")
+        
+        # 取得 tech5 的 DataFrame
+        tech5_df = all_dataframes['tech5'] if 'tech5' in all_dataframes else None
+        if tech5_df is not None:
+            print("\n--- tech5_df 範例 ---")
+            print(tech5_df.head())
+            save_dataframe(tech5_df, f"tech5.csv")
+        
+        # 取得 tech5 的 DataFrame
+        tech5_df = all_dataframes['tech5'] if 'tech5' in all_dataframes else None
+        if tech5_df is not None:
+            print("\n--- tech5_df 範例 ---")
+            print(tech5_df.head())
+            save_dataframe(tech5_df, f"tech5.csv")
         
         return all_dataframes
     except Exception as e:
