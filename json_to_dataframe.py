@@ -287,6 +287,73 @@ def process_cash_flow_growth(json_file_path):
     
     return df
 
+def process_income_growth(json_file_path):
+    """
+    將 JSON 檔案中的 incomeStatementGrowth 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得損益表成長數據
+    income_growth_data = data['incomeStatementGrowth']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in income_growth_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': record.get('symbol'),
+            'calendarYear': record.get('calendarYear'),
+            'period': record.get('period'),
+            'growthRevenue': record.get('growthRevenue'),
+            'growthCostOfRevenue': record.get('growthCostOfRevenue'),
+            'growthGrossProfit': record.get('growthGrossProfit'),
+            'growthGrossProfitRatio': record.get('growthGrossProfitRatio'),
+            'growthResearchAndDevelopmentExpenses': record.get('growthResearchAndDevelopmentExpenses'),
+            'growthGeneralAndAdministrativeExpenses': record.get('growthGeneralAndAdministrativeExpenses'),
+            'growthSellingAndMarketingExpenses': record.get('growthSellingAndMarketingExpenses'),
+            'growthOtherExpenses': record.get('growthOtherExpenses'),
+            'growthOperatingExpenses': record.get('growthOperatingExpenses'),
+            'growthCostAndExpenses': record.get('growthCostAndExpenses'),
+            'growthInterestExpense': record.get('growthInterestExpense'),
+            'growthDepreciationAndAmortization': record.get('growthDepreciationAndAmortization'),
+            'growthEBITDA': record.get('growthEBITDA'),
+            'growthEBITDARatio': record.get('growthEBITDARatio'),
+            'growthOperatingIncome': record.get('growthOperatingIncome'),
+            'growthOperatingIncomeRatio': record.get('growthOperatingIncomeRatio'),
+            'growthTotalOtherIncomeExpensesNet': record.get('growthTotalOtherIncomeExpensesNet'),
+            'growthIncomeBeforeTax': record.get('growthIncomeBeforeTax'),
+            'growthIncomeBeforeTaxRatio': record.get('growthIncomeBeforeTaxRatio'),
+            'growthIncomeTaxExpense': record.get('growthIncomeTaxExpense'),
+            'growthNetIncome': record.get('growthNetIncome'),
+            'growthNetIncomeRatio': record.get('growthNetIncomeRatio'),
+            'growthEPS': record.get('growthEPS'),
+            'growthEPSDiluted': record.get('growthEPSDiluted'),
+            'growthWeightedAverageShsOut': record.get('growthWeightedAverageShsOut'),
+            'growthWeightedAverageShsOutDil': record.get('growthWeightedAverageShsOutDil')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由新到舊）
+        df = df.sort_values('date', ascending=False).reset_index(drop=True)
+    
+    return df
+
 def load_json_data(file_path: str) -> dict:
     """讀取 JSON 檔案並回傳字典"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -328,6 +395,11 @@ def process_all_data(json_file_path: str) -> dict:
         df = process_cash_flow_growth(json_file_path)
         result['cashFlowStatementGrowth'] = df
     
+    # 處理 incomeStatementGrowth
+    if 'incomeStatementGrowth' in data and data['incomeStatementGrowth']:
+        df = process_income_growth(json_file_path)
+        result['incomeStatementGrowth'] = df
+    
     return result
 
 def main():
@@ -364,6 +436,13 @@ def main():
             print("\n--- cashFlowStatementGrowth_df 範例 ---")
             print(cashflow_growth_df.head())
             save_dataframe(cashflow_growth_df, f"cashFlowStatementGrowth.csv")
+        
+        # 取得 incomeStatementGrowth 的 DataFrame
+        income_growth_df = all_dataframes['incomeStatementGrowth'] if 'incomeStatementGrowth' in all_dataframes else None
+        if income_growth_df is not None:
+            print("\n--- incomeStatementGrowth_df 範例 ---")
+            print(income_growth_df.head())
+            save_dataframe(income_growth_df, f"incomeStatementGrowth.csv")
         
         return all_dataframes
     except Exception as e:
