@@ -121,6 +121,101 @@ def process_financial_growth(json_file_path):
     
     return df
 
+def process_ratios(json_file_path):
+    """
+    將 JSON 檔案中的 ratios 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得比率數據
+    ratios_data = data['ratios']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in ratios_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': record.get('symbol'),
+            'calendarYear': record.get('calendarYear'),
+            'period': record.get('period'),
+            'currentRatio': record.get('currentRatio'),
+            'quickRatio': record.get('quickRatio'),
+            'cashRatio': record.get('cashRatio'),
+            'daysOfSalesOutstanding': record.get('daysOfSalesOutstanding'),
+            'daysOfInventoryOutstanding': record.get('daysOfInventoryOutstanding'),
+            'operatingCycle': record.get('operatingCycle'),
+            'daysOfPayablesOutstanding': record.get('daysOfPayablesOutstanding'),
+            'cashConversionCycle': record.get('cashConversionCycle'),
+            'grossProfitMargin': record.get('grossProfitMargin'),
+            'operatingProfitMargin': record.get('operatingProfitMargin'),
+            'pretaxProfitMargin': record.get('pretaxProfitMargin'),
+            'netProfitMargin': record.get('netProfitMargin'),
+            'effectiveTaxRate': record.get('effectiveTaxRate'),
+            'returnOnAssets': record.get('returnOnAssets'),
+            'returnOnEquity': record.get('returnOnEquity'),
+            'returnOnCapitalEmployed': record.get('returnOnCapitalEmployed'),
+            'netIncomePerEBT': record.get('netIncomePerEBT'),
+            'ebtPerEbit': record.get('ebtPerEbit'),
+            'ebitPerRevenue': record.get('ebitPerRevenue'),
+            'debtRatio': record.get('debtRatio'),
+            'debtEquityRatio': record.get('debtEquityRatio'),
+            'longTermDebtToCapitalization': record.get('longTermDebtToCapitalization'),
+            'totalDebtToCapitalization': record.get('totalDebtToCapitalization'),
+            'interestCoverage': record.get('interestCoverage'),
+            'cashFlowToDebtRatio': record.get('cashFlowToDebtRatio'),
+            'companyEquityMultiplier': record.get('companyEquityMultiplier'),
+            'receivablesTurnover': record.get('receivablesTurnover'),
+            'payablesTurnover': record.get('payablesTurnover'),
+            'inventoryTurnover': record.get('inventoryTurnover'),
+            'fixedAssetTurnover': record.get('fixedAssetTurnover'),
+            'assetTurnover': record.get('assetTurnover'),
+            'operatingCashFlowPerShare': record.get('operatingCashFlowPerShare'),
+            'freeCashFlowPerShare': record.get('freeCashFlowPerShare'),
+            'cashPerShare': record.get('cashPerShare'),
+            'payoutRatio': record.get('payoutRatio'),
+            'operatingCashFlowSalesRatio': record.get('operatingCashFlowSalesRatio'),
+            'freeCashFlowOperatingCashFlowRatio': record.get('freeCashFlowOperatingCashFlowRatio'),
+            'cashFlowCoverageRatios': record.get('cashFlowCoverageRatios'),
+            'shortTermCoverageRatios': record.get('shortTermCoverageRatios'),
+            'capitalExpenditureCoverageRatio': record.get('capitalExpenditureCoverageRatio'),
+            'dividendPaidAndCapexCoverageRatio': record.get('dividendPaidAndCapexCoverageRatio'),
+            'dividendPayoutRatio': record.get('dividendPayoutRatio'),
+            'priceBookValueRatio': record.get('priceBookValueRatio'),
+            'priceToBookRatio': record.get('priceToBookRatio'),
+            'priceToSalesRatio': record.get('priceToSalesRatio'),
+            'priceEarningsRatio': record.get('priceEarningsRatio'),
+            'priceToFreeCashFlowsRatio': record.get('priceToFreeCashFlowsRatio'),
+            'priceToOperatingCashFlowsRatio': record.get('priceToOperatingCashFlowsRatio'),
+            'priceCashFlowRatio': record.get('priceCashFlowRatio'),
+            'priceEarningsToGrowthRatio': record.get('priceEarningsToGrowthRatio'),
+            'priceSalesRatio': record.get('priceSalesRatio'),
+            'dividendYield': record.get('dividendYield'),
+            'enterpriseValueMultiple': record.get('enterpriseValueMultiple'),
+            'priceFairValue': record.get('priceFairValue')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由新到舊）
+        df = df.sort_values('date', ascending=False).reset_index(drop=True)
+    
+    return df
+
 def load_json_data(file_path: str) -> dict:
     """讀取 JSON 檔案並回傳字典"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -152,6 +247,11 @@ def process_all_data(json_file_path: str) -> dict:
         df = process_financial_growth(json_file_path)
         result['financialGrowth'] = df
     
+    # 處理 ratios
+    if 'ratios' in data and data['ratios']:
+        df = process_ratios(json_file_path)
+        result['ratios'] = df
+    
     return result
 
 def main():
@@ -174,6 +274,13 @@ def main():
             print("\n--- financialGrowth_df 範例 ---")
             print(growth_df.head())
             save_dataframe(growth_df, f"financialGrowth.csv")
+        
+        # 取得 ratios 的 DataFrame
+        ratios_df = all_dataframes['ratios'] if 'ratios' in all_dataframes else None
+        if ratios_df is not None:
+            print("\n--- ratios_df 範例 ---")
+            print(ratios_df.head())
+            save_dataframe(ratios_df, f"ratios.csv")
         
         return all_dataframes
     except Exception as e:
