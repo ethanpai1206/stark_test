@@ -216,6 +216,77 @@ def process_ratios(json_file_path):
     
     return df
 
+def process_cash_flow_growth(json_file_path):
+    """
+    將 JSON 檔案中的 cashFlowStatementGrowth 數據轉換為 DataFrame
+    
+    Args:
+        json_file_path (str): JSON 檔案路徑
+    
+    Returns:
+        pd.DataFrame: 轉換後的 DataFrame
+    """
+    
+    # 讀取 JSON 檔案
+    with open(json_file_path, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+    
+    # 取得現金流量成長數據
+    cash_flow_growth_data = data['cashFlowStatementGrowth']
+    
+    # 創建 DataFrame
+    df_data = []
+    
+    for record in cash_flow_growth_data:
+        row = {
+            'date': record.get('date'),
+            'symbol': record.get('symbol'),
+            'calendarYear': record.get('calendarYear'),
+            'period': record.get('period'),
+            'growthNetIncome': record.get('growthNetIncome'),
+            'growthDepreciationAndAmortization': record.get('growthDepreciationAndAmortization'),
+            'growthDeferredIncomeTax': record.get('growthDeferredIncomeTax'),
+            'growthStockBasedCompensation': record.get('growthStockBasedCompensation'),
+            'growthChangeInWorkingCapital': record.get('growthChangeInWorkingCapital'),
+            'growthAccountsReceivables': record.get('growthAccountsReceivables'),
+            'growthInventory': record.get('growthInventory'),
+            'growthAccountsPayables': record.get('growthAccountsPayables'),
+            'growthOtherWorkingCapital': record.get('growthOtherWorkingCapital'),
+            'growthOtherNonCashItems': record.get('growthOtherNonCashItems'),
+            'growthNetCashProvidedByOperatingActivites': record.get('growthNetCashProvidedByOperatingActivites'),
+            'growthInvestmentsInPropertyPlantAndEquipment': record.get('growthInvestmentsInPropertyPlantAndEquipment'),
+            'growthAcquisitionsNet': record.get('growthAcquisitionsNet'),
+            'growthPurchasesOfInvestments': record.get('growthPurchasesOfInvestments'),
+            'growthSalesMaturitiesOfInvestments': record.get('growthSalesMaturitiesOfInvestments'),
+            'growthOtherInvestingActivites': record.get('growthOtherInvestingActivites'),
+            'growthNetCashUsedForInvestingActivites': record.get('growthNetCashUsedForInvestingActivites'),
+            'growthDebtRepayment': record.get('growthDebtRepayment'),
+            'growthCommonStockIssued': record.get('growthCommonStockIssued'),
+            'growthCommonStockRepurchased': record.get('growthCommonStockRepurchased'),
+            'growthDividendsPaid': record.get('growthDividendsPaid'),
+            'growthOtherFinancingActivites': record.get('growthOtherFinancingActivites'),
+            'growthNetCashUsedProvidedByFinancingActivities': record.get('growthNetCashUsedProvidedByFinancingActivities'),
+            'growthEffectOfForexChangesOnCash': record.get('growthEffectOfForexChangesOnCash'),
+            'growthNetChangeInCash': record.get('growthNetChangeInCash'),
+            'growthCashAtEndOfPeriod': record.get('growthCashAtEndOfPeriod'),
+            'growthCashAtBeginningOfPeriod': record.get('growthCashAtBeginningOfPeriod'),
+            'growthOperatingCashFlow': record.get('growthOperatingCashFlow'),
+            'growthCapitalExpenditure': record.get('growthCapitalExpenditure'),
+            'growthFreeCashFlow': record.get('growthFreeCashFlow')
+        }
+        df_data.append(row)
+    
+    # 創建 DataFrame
+    df = pd.DataFrame(df_data)
+    
+    # 將 date 欄位轉換為日期格式（如果存在）
+    if 'date' in df.columns and df['date'].notna().any():
+        df['date'] = pd.to_datetime(df['date'])
+        # 按日期排序（由新到舊）
+        df = df.sort_values('date', ascending=False).reset_index(drop=True)
+    
+    return df
+
 def load_json_data(file_path: str) -> dict:
     """讀取 JSON 檔案並回傳字典"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -252,6 +323,11 @@ def process_all_data(json_file_path: str) -> dict:
         df = process_ratios(json_file_path)
         result['ratios'] = df
     
+    # 處理 cashFlowStatementGrowth
+    if 'cashFlowStatementGrowth' in data and data['cashFlowStatementGrowth']:
+        df = process_cash_flow_growth(json_file_path)
+        result['cashFlowStatementGrowth'] = df
+    
     return result
 
 def main():
@@ -281,6 +357,13 @@ def main():
             print("\n--- ratios_df 範例 ---")
             print(ratios_df.head())
             save_dataframe(ratios_df, f"ratios.csv")
+        
+        # 取得 cashFlowStatementGrowth 的 DataFrame
+        cashflow_growth_df = all_dataframes['cashFlowStatementGrowth'] if 'cashFlowStatementGrowth' in all_dataframes else None
+        if cashflow_growth_df is not None:
+            print("\n--- cashFlowStatementGrowth_df 範例 ---")
+            print(cashflow_growth_df.head())
+            save_dataframe(cashflow_growth_df, f"cashFlowStatementGrowth.csv")
         
         return all_dataframes
     except Exception as e:
