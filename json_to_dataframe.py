@@ -106,7 +106,16 @@ def process_financial_growth(json_file_path):
             'tenYShareholdersEquityGrowthPerShare': record.get('tenYShareholdersEquityGrowthPerShare'),
             'fiveYShareholdersEquityGrowthPerShare': record.get('fiveYShareholdersEquityGrowthPerShare'),
             'threeYShareholdersEquityGrowthPerShare': record.get('threeYShareholdersEquityGrowthPerShare'),
-            'tenYDividendperShareGrowthPerShare': record.get('tenYDividendperShareGrowthPerShare')
+            'tenYDividendperShareGrowthPerShare': record.get('tenYDividendperShareGrowthPerShare'),
+            'fiveYDividendperShareGrowthPerShare': record.get('fiveYDividendperShareGrowthPerShare'),
+            'threeYDividendperShareGrowthPerShare': record.get('threeYDividendperShareGrowthPerShare'),
+            'receivablesGrowth': record.get('receivablesGrowth'),
+            'inventoryGrowth': record.get('inventoryGrowth'),
+            'assetGrowth': record.get('assetGrowth'),
+            'bookValueperShareGrowth': record.get('bookValueperShareGrowth'),
+            'debtGrowth': record.get('debtGrowth'),
+            'rdexpenseGrowth': record.get('rdexpenseGrowth'),
+            'sgaexpensesGrowth': record.get('sgaexpensesGrowth')
         }
         df_data.append(row)
     
@@ -459,20 +468,20 @@ def process_tech5(json_file_path):
         row = {
             'date': record.get('date'),
             'symbol': "1101.TW",
-            'open': record.get('open'),
-            'high': record.get('high'),
-            'low': record.get('low'),
-            'close': record.get('close'),
-            'volume': record.get('volume'),
-            'sma': record.get('sma'),
-            'ema': record.get('ema'),
-            'wma': record.get('wma'),
-            'dema': record.get('dema'),
-            'tema': record.get('tema'),
-            'williams': record.get('williams'),
-            'rsi': record.get('rsi'),
-            'adx': record.get('adx'),
-            'standardDeviation': record.get('standardDeviation')
+            'tech5Open': record.get('open'),
+            'tech5High': record.get('high'),
+            'tech5Low': record.get('low'),
+            'tech5Close': record.get('close'),
+            'tech5Volume': record.get('volume'),
+            'tech5SMA': record.get('sma'),
+            'tech5EMA': record.get('ema'),
+            'tech5WMA': record.get('wma'),
+            'tech5DEMA': record.get('dema'),
+            'tech5TEMA': record.get('tema'),
+            'tech5Williams': record.get('williams'),
+            'tech5RSI': record.get('rsi'),
+            'tech5ADX': record.get('adx'),
+            'tech5StandardDeviation': record.get('standardDeviation')
         }
         df_data.append(row)
     
@@ -512,20 +521,20 @@ def process_tech20(json_file_path):
         row = {
             'date': record.get('date'),
             'symbol': "1101.TW",
-            'open': record.get('open'),
-            'high': record.get('high'),
-            'low': record.get('low'),
-            'close': record.get('close'),
-            'volume': record.get('volume'),
-            'sma': record.get('sma'),
-            'ema': record.get('ema'),
-            'wma': record.get('wma'),
-            'dema': record.get('dema'),
-            'tema': record.get('tema'),
-            'williams': record.get('williams'),
-            'rsi': record.get('rsi'),
-            'adx': record.get('adx'),
-            'standardDeviation': record.get('standardDeviation')
+            'tech20Open': record.get('open'),
+            'tech20High': record.get('high'),
+            'tech20Low': record.get('low'),
+            'tech20Close': record.get('close'),
+            'tech20Volume': record.get('volume'),
+            'tech20SMA': record.get('sma'),
+            'tech20EMA': record.get('ema'),
+            'tech20WMA': record.get('wma'),
+            'tech20DEMA': record.get('dema'),
+            'tech20TEMA': record.get('tema'),
+            'tech20Williams': record.get('williams'),
+            'tech20RSI': record.get('rsi'),
+            'tech20ADX': record.get('adx'),
+            'tech20StandardDeviation': record.get('standardDeviation')
         }
         df_data.append(row)
     
@@ -565,20 +574,20 @@ def process_tech60(json_file_path):
         row = {
             'date': record.get('date'),
             'symbol': "1101.TW",
-            'open': record.get('open'),
-            'high': record.get('high'),
-            'low': record.get('low'),
-            'close': record.get('close'),
-            'volume': record.get('volume'),
-            'sma': record.get('sma'),
-            'ema': record.get('ema'),
-            'wma': record.get('wma'),
-            'dema': record.get('dema'),
-            'tema': record.get('tema'),
-            'williams': record.get('williams'),
-            'rsi': record.get('rsi'),
-            'adx': record.get('adx'),
-            'standardDeviation': record.get('standardDeviation')
+            'tech60Open': record.get('open'),
+            'tech60High': record.get('high'),
+            'tech60Low': record.get('low'),
+            'tech60Close': record.get('close'),
+            'tech60Volume': record.get('volume'),
+            'tech60SMA': record.get('sma'),
+            'tech60EMA': record.get('ema'),
+            'tech60WMA': record.get('wma'),
+            'tech60DEMA': record.get('dema'),
+            'tech60TEMA': record.get('tema'),
+            'tech60Williams': record.get('williams'),
+            'tech60RSI': record.get('rsi'),
+            'tech60ADX': record.get('adx'),
+            'tech60StandardDeviation': record.get('standardDeviation')
         }
         df_data.append(row)
     
@@ -618,20 +627,20 @@ def process_tech252(json_file_path):
         row = {
             'date': record.get('date'),
             'symbol': "1101.TW",
-            'open': record.get('open'),
-            'high': record.get('high'),
-            'low': record.get('low'),
-            'close': record.get('close'),
-            'volume': record.get('volume'),
-            'sma': record.get('sma'),
-            'ema': record.get('ema'),
-            'wma': record.get('wma'),
-            'dema': record.get('dema'),
-            'tema': record.get('tema'),
-            'williams': record.get('williams'),
-            'rsi': record.get('rsi'),
-            'adx': record.get('adx'),
-            'standardDeviation': record.get('standardDeviation')
+            'tech252Open': record.get('open'),
+            'tech252High': record.get('high'),
+            'tech252Low': record.get('low'),
+            'tech252Close': record.get('close'),
+            'tech252Volume': record.get('volume'),
+            'tech252SMA': record.get('sma'),
+            'tech252EMA': record.get('ema'),
+            'tech252WMA': record.get('wma'),
+            'tech252DEMA': record.get('dema'),
+            'tech252TEMA': record.get('tema'),
+            'tech252Williams': record.get('williams'),
+            'tech252RSI': record.get('rsi'),
+            'tech252ADX': record.get('adx'),
+            'tech252StandardDeviation': record.get('standardDeviation')
         }
         df_data.append(row)
     
@@ -656,9 +665,11 @@ def add_common_columns(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
     df['symbol'] = symbol
     return df
 
-def save_dataframe(df: pd.DataFrame, filename: str, output_dir: str = "/home/ubuntu"):
+def save_dataframe(df: pd.DataFrame, filename: str, output_dir: str = "."):
     """儲存 DataFrame 為 CSV 檔案"""
     output_path = os.path.join(output_dir, filename)
+    # 確保目錄存在
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
     df.to_csv(output_path, index=False)
     print(f"已儲存為 CSV 檔案: {output_path}")
 
@@ -731,70 +742,70 @@ def main():
         if price_df is not None:
             print("\n--- price_df 範例 ---")
             print(price_df.head())
-            save_dataframe(price_df, f"historicalPriceFull.csv")
+            save_dataframe(price_df, f"data/historicalPriceFull.csv")
         
         # 取得 financialGrowth 的 DataFrame
         growth_df = all_dataframes['financialGrowth'] if 'financialGrowth' in all_dataframes else None
         if growth_df is not None:
             print("\n--- financialGrowth_df 範例 ---")
             print(growth_df.head())
-            save_dataframe(growth_df, f"financialGrowth.csv")
+            save_dataframe(growth_df, f"data/financialGrowth.csv")
         
         # 取得 ratios 的 DataFrame
         ratios_df = all_dataframes['ratios'] if 'ratios' in all_dataframes else None
         if ratios_df is not None:
             print("\n--- ratios_df 範例 ---")
             print(ratios_df.head())
-            save_dataframe(ratios_df, f"ratios.csv")
+            save_dataframe(ratios_df, f"data/ratios.csv")
         
         # 取得 cashFlowStatementGrowth 的 DataFrame
         cashflow_growth_df = all_dataframes['cashFlowStatementGrowth'] if 'cashFlowStatementGrowth' in all_dataframes else None
         if cashflow_growth_df is not None:
             print("\n--- cashFlowStatementGrowth_df 範例 ---")
             print(cashflow_growth_df.head())
-            save_dataframe(cashflow_growth_df, f"cashFlowStatementGrowth.csv")
+            save_dataframe(cashflow_growth_df, f"data/cashFlowStatementGrowth.csv")
         
         # 取得 incomeStatementGrowth 的 DataFrame
         income_growth_df = all_dataframes['incomeStatementGrowth'] if 'incomeStatementGrowth' in all_dataframes else None
         if income_growth_df is not None:
             print("\n--- incomeStatementGrowth_df 範例 ---")
             print(income_growth_df.head())
-            save_dataframe(income_growth_df, f"incomeStatementGrowth.csv")
+            save_dataframe(income_growth_df, f"data/incomeStatementGrowth.csv")
         
         # 取得 balanceSheetStatementGrowth 的 DataFrame
         balance_sheet_growth_df = all_dataframes['balanceSheetStatementGrowth'] if 'balanceSheetStatementGrowth' in all_dataframes else None
         if balance_sheet_growth_df is not None:
             print("\n--- balanceSheetStatementGrowth_df 範例 ---")
             print(balance_sheet_growth_df.head())
-            save_dataframe(balance_sheet_growth_df, f"balanceSheetStatementGrowth.csv")
+            save_dataframe(balance_sheet_growth_df, f"data/balanceSheetStatementGrowth.csv")
         
         # 取得 tech5 的 DataFrame
         tech5_df = all_dataframes['tech5'] if 'tech5' in all_dataframes else None
         if tech5_df is not None:
             print("\n--- tech5_df 範例 ---")
             print(tech5_df.head())
-            save_dataframe(tech5_df, f"tech5.csv")
+            save_dataframe(tech5_df, f"data/tech5.csv")
         
         # 取得 tech20 的 DataFrame
         tech20_df = all_dataframes['tech20'] if 'tech20' in all_dataframes else None
         if tech20_df is not None:
             print("\n--- tech20_df 範例 ---")
             print(tech20_df.head())
-            save_dataframe(tech20_df, f"tech20.csv")
+            save_dataframe(tech20_df, f"data/tech20.csv")
         
         # 取得 tech60 的 DataFrame
         tech60_df = all_dataframes['tech60'] if 'tech60' in all_dataframes else None
         if tech60_df is not None:
             print("\n--- tech60_df 範例 ---")
             print(tech60_df.head())
-            save_dataframe(tech60_df, f"tech60.csv")
+            save_dataframe(tech60_df, f"data/tech60.csv")
         
         # 取得 tech252 的 DataFrame
         tech252_df = all_dataframes['tech252'] if 'tech252' in all_dataframes else None
         if tech252_df is not None:
             print("\n--- tech252_df 範例 ---")
             print(tech252_df.head())
-            save_dataframe(tech252_df, f"tech252.csv")
+            save_dataframe(tech252_df, f"data/tech252.csv")
         
         return all_dataframes
     except Exception as e:
