@@ -143,8 +143,9 @@ def main():
     available_tables = {
         '1': ('data/financialGrowth.csv', '財務成長數據'),
         '2': ('data/ratios.csv', '財務比率數據'),
+        '3': ('data/cashFlowStatementGrowth.csv', '現金流量表成長數據'),
         # 未來可以在這裡新增更多表格
-        # '3': ('data/newTable.csv', '新的財務數據'),
+        # '4': ('data/newTable.csv', '新的財務數據'),
     }
     
     print("=== 股票數據合併工具 ===")
