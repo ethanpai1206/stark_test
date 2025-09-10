@@ -31,7 +31,7 @@ def fetch_json_from_url(url):
         return None
 
 # 你的 Notion URL
-notion_url = "https://file.notion.so/f/f/d70b900c-92f2-4d32-870b-1fa0d80e953b/2cc1982f-a835-4d84-9002-318758475632/output_clean_date_technical.json?table=block&id=f447ef6f-695d-45bb-9e49-f6a9c2e5ddd0&spaceId=d70b900c-92f2-4d32-870b-1fa0d80e953b&expirationTimestamp=1757361600000&signature=ECJPVpZK6fdlZh02EsxO_cssYwz2_X_4eYDJDpBdtsA&downloadName=output_clean_date_technical.json"
+notion_url = "https://file.notion.so/f/f/d70b900c-92f2-4d32-870b-1fa0d80e953b/2cc1982f-a835-4d84-9002-318758475632/output_clean_date_technical.json?table=block&id=f447ef6f-695d-45bb-9e49-f6a9c2e5ddd0&spaceId=d70b900c-92f2-4d32-870b-1fa0d80e953b&expirationTimestamp=1757541600000&signature=tMAguhh67Khr95BrN0qd39SPDMimj3gtXdsbwGQNwmA&downloadName=output_clean_date_technical.json"
 
 # 獲取 JSON 資料
 data = fetch_json_from_url(notion_url)
