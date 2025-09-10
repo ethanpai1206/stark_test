@@ -148,18 +148,26 @@ def main():
         '2': ('data/ratios.csv', '財務比率數據'),
         '3': ('data/cashFlowStatementGrowth.csv', '現金流量表成長數據'),
         '4': ('data/incomeStatementGrowth.csv', '損益表成長數據'),
+        '5': ('data/balanceSheetStatementGrowth.csv', '資產負債表成長數據'),
         # 未來可以在這裡新增更多表格
-        # '5': ('data/newTable.csv', '新的財務數據'),
+        # '6': ('data/newTable.csv', '新的財務數據'),
     }
     
     print("=== 股票數據合併工具 ===")
-    print("可用的數據表:")
+    print("\n📊 主表說明:")
+    print("• 主表: data/historicalPriceFull.csv (每日歷史股價數據)")
+    print("• 合併方式: 將季度財務數據合併到每日股價數據中")
+    print("• 季度數據會填入對應季度內的所有交易日")
+    
+    print("\n📋 可用的財務數據表:")
     for key, (_, name) in available_tables.items():
         print(f"{key}. {name}")
     
-    print("\n請選擇要合併的數據表（可多選）:")
-    print("例如: 輸入 '1,2' 表示同時合併財務成長數據和財務比率數據")
-    print("或輸入 '1' 表示只合併財務成長數據")
+    print("\n🔧 使用說明:")
+    print("請選擇要合併的財務數據表（可多選）:")
+    print("• 例如: 輸入 '1,2' 表示同時合併財務成長數據和財務比率數據")
+    print("• 例如: 輸入 '1' 表示只合併財務成長數據")
+    print("• 例如: 輸入 '1,2,3,4,5' 表示合併所有可用的財務數據")
     
     user_input = input("\n請輸入選擇（用逗號分隔）: ").strip()
     
