@@ -51,10 +51,13 @@ def merge_quarterly_data_to_historical(historical_df, quarterly_df, quarterly_na
     # 獲取季度數據的所有列（除了date和symbol）
     quarterly_cols = [col for col in quarterly_df.columns if col not in ['date', 'symbol']]
     
-    # 為結果DataFrame添加季度數據列
-    for col in quarterly_cols:
-        if col not in historical_df.columns:
-            historical_df[col] = np.nan
+    # 批量添加新列，避免逐一添加導致的性能問題
+    new_cols = [col for col in quarterly_cols if col not in historical_df.columns]
+    if new_cols:
+        # 創建包含新列的DataFrame並一次性合併
+        new_cols_df = pd.DataFrame(index=historical_df.index, columns=new_cols)
+        new_cols_df[:] = np.nan
+        historical_df = pd.concat([historical_df, new_cols_df], axis=1)
     
     # 按symbol分組處理
     for symbol in historical_df['symbol'].unique():
@@ -144,8 +147,9 @@ def main():
         '1': ('data/financialGrowth.csv', '財務成長數據'),
         '2': ('data/ratios.csv', '財務比率數據'),
         '3': ('data/cashFlowStatementGrowth.csv', '現金流量表成長數據'),
+        '4': ('data/incomeStatementGrowth.csv', '損益表成長數據'),
         # 未來可以在這裡新增更多表格
-        # '4': ('data/newTable.csv', '新的財務數據'),
+        # '5': ('data/newTable.csv', '新的財務數據'),
     }
     
     print("=== 股票數據合併工具 ===")
