@@ -234,11 +234,11 @@ def main():
     for key, (_, name) in available_tables.items():
         print(f"{key}. {name}")
     
-    print("\n� 可用的技術指標表 (日資料):")
+    print("\n📊 可用的技術指標表 (日資料):")
     for key, (_, name) in daily_tables_available.items():
         print(f"{key}. {name}")
     
-    print("\n�🔧 使用說明:")
+    print("\n🔧 使用說明:")
     print("• 財務數據: 請選擇要合併的財務數據表（可多選）")
     print("  例如: 輸入 '1,2' 表示同時合併財務成長數據和財務比率數據")
     print("• 技術指標: 請選擇要合併的技術指標表（可多選）")
@@ -294,28 +294,14 @@ def main():
             for _, name in selected_daily_tables:
                 print(f"- {name}")
         
-        # 生成輸出文件名
-        all_table_names = []
-        if selected_tables:
-            all_table_names.extend([name.replace('數據', '') for _, name in selected_tables])
-        if selected_daily_tables:
-            all_table_names.extend([name.replace('數據', '') for _, name in selected_daily_tables])
-        
-        output_file = f"merged_{'_'.join(all_table_names)}_data.csv"
-        
         print(f"\n開始合併數據...")
         
         # 執行合併（包含日資料和季度數據）
         result_df = merge_selected_data(selected_tables, selected_daily_tables)
         
-        # 保存結果
-        print(f"\n正在保存合併後的數據到: {output_file}")
-        result_df.to_csv(output_file, index=False)
-        
         # 顯示統計信息
         print(f"\n=== 合併完成! ===")
         print(f"最終數據維度: {result_df.shape}")
-        print(f"輸出文件: {output_file}")
         
         # 顯示數據覆蓋率統計
         historical_cols = ['date', 'symbol', 'open', 'high', 'low', 'close', 'adjClose', 
@@ -344,6 +330,57 @@ def main():
                 total_rows = len(result_df)
                 rows_with_tech = len(result_df.dropna(subset=tech_cols, how='all'))
                 print(f"技術指標覆蓋率: {rows_with_tech/total_rows*100:.2f}% ({rows_with_tech}/{total_rows})")
+        
+        # 詢問是否要移除包含 NaN 值的行
+        print(f"\n📋 數據清理選項:")
+        print("是否要移除包含 NaN 值的行？")
+        print("• y/yes: 移除任何包含 NaN 值的行（適合機器學習模型訓練）")
+        print("• n/no: 保留所有數據，包括含有 NaN 的行（預設）")
+        
+        clean_input = input("請選擇 (y/n，預設為 n): ").strip().lower()
+        
+        # 生成基本輸出文件名
+        all_table_names = []
+        if selected_tables:
+            all_table_names.extend([name.replace('數據', '') for _, name in selected_tables])
+        if selected_daily_tables:
+            all_table_names.extend([name.replace('數據', '') for _, name in selected_daily_tables])
+        
+        output_file = f"merged_{'_'.join(all_table_names)}_data.csv"
+        
+        if clean_input in ['y', 'yes']:
+            original_count = len(result_df)
+            
+            # 移除任何包含 NaN 值的行
+            result_df = result_df.dropna()
+            
+            cleaned_count = len(result_df)
+            removed_count = original_count - cleaned_count
+            
+            print(f"✅ 數據清理完成:")
+            print(f"   原始行數: {original_count:,}")
+            print(f"   清理後行數: {cleaned_count:,}")
+            print(f"   移除行數: {removed_count:,} ({removed_count/original_count*100:.2f}%)")
+            print(f"   數據現在適合模型訓練（無 NaN 值）")
+            
+            # 更新輸出文件名，標示已清理
+            base_name, ext = output_file.rsplit('.', 1)
+            output_file = f"{base_name}_cleaned.{ext}"
+        else:
+            print("✅ 保留所有數據，包括含有 NaN 的行")
+        
+        # 按日期由新到舊排序
+        print(f"\n🔄 正在按日期排序...")
+        result_df = result_df.sort_values(by=['date'], ascending=False)
+        print("✅ 數據已按日期由新到舊排序")
+        
+        # 保存結果
+        print(f"\n正在保存合併後的數據到: {output_file}")
+        result_df.to_csv(output_file, index=False)
+        
+        # 最終統計信息
+        print(f"輸出文件: {output_file}")
+        print(f"最終數據維度: {result_df.shape}")
         
     except Exception as e:
         print(f"執行過程中發生錯誤: {e}")
