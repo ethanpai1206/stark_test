@@ -12,11 +12,6 @@ services:
       - .:/home/ubuntu/workspace/stark_test
       # 映射 data 目錄
       - ./data:/home/ubuntu/workspace/stark_test/data
-      # 保存容器內的 __pycache__ 避免權限問題
-      - stark_test_cache:/home/ubuntu/workspace/stark_test/__pycache__
     working_dir: /home/ubuntu/workspace/stark_test
     stdin_open: true
     tty: true
-
-volumes:
-  stark_test_cache:
