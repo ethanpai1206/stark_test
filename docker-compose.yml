@@ -1,0 +1,22 @@
+version: '3.8'
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: dockerfile
+    image: stark_test:v1.0
+    restart: unless-stopped
+    container_name: "stark_test"
+    volumes:
+      # 映射整個專案目錄，讓容器內外同步
+      - .:/home/ubuntu/workspace/stark_test
+      # 映射 data 目錄
+      - ./data:/home/ubuntu/workspace/stark_test/data
+      # 保存容器內的 __pycache__ 避免權限問題
+      - stark_test_cache:/home/ubuntu/workspace/stark_test/__pycache__
+    working_dir: /home/ubuntu/workspace/stark_test
+    stdin_open: true
+    tty: true
+
+volumes:
+  stark_test_cache:
